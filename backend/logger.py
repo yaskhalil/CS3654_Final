@@ -1,3 +1,6 @@
+"""
+Logger config for backend pipeline.
+"""
 import logging
 from pathlib import Path
 
@@ -13,3 +16,4 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
