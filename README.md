@@ -146,7 +146,7 @@ flights-analytics/
 
 ```bash
 # 1. create and activate a virtual environment
-python -m venv .venv
+python3 -m venv ds_env && source ds_env/bin/activate && pip install --upgrade pip && pip install numpy pandas kagglehub scikit-learn torch torchvision torchaudio scipy matplotlib
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 # 2. install dependencies
