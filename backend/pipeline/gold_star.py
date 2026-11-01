@@ -11,22 +11,22 @@ FACT_COLS = ['id', 'carrier', 'tailnum', 'origin', 'dest', 'time_hour',
              'air_time', 'distance', 'flight']
 
 def build_dim_carrier(df):
-    """One row per carrier with its full airline name."""
+    """One row per carrier with its full airline name"""
     return df[['carrier', 'name']].drop_duplicates().sort_values('carrier').reset_index(drop = True)
 
 
 def build_dim_airport(df):
-    """One row per airport code, covering both origin and dest so the fact table can join to it twice."""
+    """One row per airport code"""
     codes = pd.concat([df['origin'], df['dest']]).drop_duplicates().sort_values()
     return pd.DataFrame({'airport_code': codes.values})
 
 
 def build_dim_aircraft(df):
-    """One row per aircraft (tailnum)."""
+    """One row per aircraft"""
     return df[['tailnum']].drop_duplicates().sort_values('tailnum').reset_index(drop = True)
 
 def build_dim_date(df):
-    """One row per scheduled departure hour (time_hour) with calendar parts for grouping in the dashboard."""
+    """One row per scheduled departure hour"""
     t = pd.Series(pd.to_datetime(df['time_hour']).unique()).sort_values()
     return pd.DataFrame({
         'time_hour': t.values,
@@ -41,7 +41,7 @@ def build_dim_date(df):
     })
 
 def build_fact_flights(df):
-    """One row per flight (id). Keys point to the dims; name is dropped since it lives in dim_carrier."""
+    """One row per flight (id)"""
     fact = df[FACT_COLS].copy()
     fact['time_hour'] = pd.to_datetime(fact['time_hour'])
     return fact
@@ -59,8 +59,9 @@ def build_star(df):
         logger.info(f"{name}: {table.shape}")
     return tables
 
+# ======= Testing =======
 def check_star(tables):
-    """Dim keys must be unique and every fact key must have a match in its dim."""
+    """Dim keys must be unique"""
     fact = tables['fact_flights']
     keys = [('dim_carrier', 'carrier', ['carrier']),
             ('dim_airport', 'airport_code', ['origin', 'dest']),

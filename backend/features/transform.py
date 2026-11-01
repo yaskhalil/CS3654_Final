@@ -9,9 +9,9 @@ SILVER_PATH = "data/silver/flights_clean.csv"
 SCALER_PATH = "models/scaler.joblib"
 
 LOG_COLS = ['distance', 'air_time']
-SIGNED_LOG_COLS = ['dep_delay', 'arr_delay']      # can be negative, so log1p can't be used directly
+SIGNED_LOG_COLS = ['dep_delay', 'arr_delay']      # log1p can't be used directly
 LOW_CARD_COLS = ['carrier', 'origin']             # one-hot
-HIGH_CARD_COLS = ['flight', 'tailnum', 'dest']    # over max_categorical_cardinality (50), frequency encoded
+HIGH_CARD_COLS = ['flight', 'tailnum', 'dest']    # over max_categorical_cardinality (50)
 
 def encode_time(df):
     "Gives hour, day of week, and month from the time_hour column."
@@ -31,6 +31,7 @@ def encode_time(df):
     return df
 
 def log_transform(df, cols = LOG_COLS, signed_cols = SIGNED_LOG_COLS):
+    """Log transformation for LOG_COLS and SIGNED_LOG_COLS"""
     df = df.copy()
     for col in cols:
         df[col] = np.log1p(df[col])
@@ -40,6 +41,7 @@ def log_transform(df, cols = LOG_COLS, signed_cols = SIGNED_LOG_COLS):
     return df
 
 def standardize(df, cols, scaler = None, path = SCALER_PATH):
+    """Standardize the columns in df."""
     df = df.copy()
     if scaler is None:
         scaler = StandardScaler().fit(df[cols])
@@ -50,6 +52,7 @@ def standardize(df, cols, scaler = None, path = SCALER_PATH):
     return df, scaler
 
 def encode_categoricals(df, low_cols = LOW_CARD_COLS, high_cols = HIGH_CARD_COLS, freq_maps = None):
+    """Encode categorical columns in df."""
     df = df.copy()
     if freq_maps is None:
         freq_maps = {col: df[col].value_counts(normalize=True) for col in high_cols}
