@@ -105,23 +105,10 @@ flights-analytics/
 │           ├── numerical.py           # (to create) box, scatter, Q-Q, PCA, DBSCAN, KS plots
 │           └── categorical.py         # (to create) bar plots, grouped bar plots
 │
-├── app/
-│   ├── app.py                         # (to create) Dash entry point
-│   ├── layout.py                      # (to create) shared wireframe layout
-│   ├── callbacks.py                   # (to create) filter + tab callbacks
-│   ├── components/
-│   │   ├── __init__.py                # (to create)
-│   │   ├── filters.py                 # (to create) min/max selector, dropdown, input area
-│   │   └── how_to_use.py              # (to create) "How to Use" modal
-│   ├── tabs/
-│   │   ├── __init__.py                # (to create)
-│   │   ├── overview_tab.py            # (to create) categorical bar plots + descriptive stats
-│   │   ├── distributions_tab.py       # (to create) box plots, Q-Q, KS, scatter
-│   │   ├── pca_tab.py                 # (to create)
-│   │   ├── clustering_tab.py          # (to create) DBSCAN scatter + outliers
-│   │   └── prediction_tab.py          # (to create) MLP prediction from user input + metrics
-│   └── assets/
-│       └── style.css                  # (to create)
+├── frontend/
+│   ├── app.py                         # Dash app, layouts, filters, callbacks
+│   ├── front_logger.py                # frontend log setup
+│   └── test_logger.py                 # logger smoke script
 │
 ├── scripts/
 │   ├── download_data.py               # (to create) places flights.csv in data/bronze/
@@ -187,8 +174,9 @@ python scripts/train_models.py
 # Write metrics and reports
 python scripts/generate_reports.py
 
-# Launch the dashboard
-python app/app.py
+# Install dashboard dependencies and launch from the project root
+pip install -r requirements.txt
+python frontend/app.py
 # then open http://127.0.0.1:8050
 ```
 
@@ -214,3 +202,8 @@ All tabs share one layout: a **min/max selector**, a **dropdown menu** (airline,
 
 - Salma Lahbibi
 - Yaseen Khalil
+
+
+### Frontend data source
+
+The Dash app lives in `frontend/app.py` and reads the cleaned `data/silver/flights_clean.parquet` by default. If Silver has not been built yet, it falls back to `data/bronze/flights.csv`. Set `FLIGHTS_DATA` to select a different CSV or Parquet file. Dashboard logs are written through `frontend/front_logger.py` to `logs/frontend.log`.
