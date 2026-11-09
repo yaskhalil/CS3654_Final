@@ -17,35 +17,30 @@ def valid_hhmm(s):
 
 
 def clean(df, report=None):
-    """Bronze -> Silver. If a dict is passed as report, row counts for each step are recorded in it."""
     report = {} if report is None else report
     report["rows_in"] = len(df)
 
-    ## 1. Dropping duplicate rows and duplicate ids
+    # Dropping duplicate rows
     report["duplicate_rows_dropped"] = int(df.duplicated().sum())
     df = df.drop_duplicates()
     report["duplicate_ids_dropped"] = int(df["id"].duplicated().sum())
     df = df.drop_duplicates(subset = "id")
 
-    ## 2. Handling missing values
-    # Policy: drop. Cancelled/diverted flights have no arr_delay or air_time, so they can't be used for delay modeling.
+    # Handling missing values
     report["null_counts_before"] = {c: int(n) for c, n in df.isnull().sum().items() if n > 0}
     report["missing_value_policy"] = "drop rows with nulls in dep_time, dep_delay, arr_time, arr_delay, air_time (cancelled/diverted flights)"
     before = len(df)
     df = df.dropna(subset = ['dep_time', 'dep_delay', 'arr_time', 'arr_delay', 'air_time'])
     report["missing_rows_dropped"] = before - len(df)
 
-    ## 3. Sanity checks
     before = len(df)
     df = df[(df["distance"] > 0) & (df["air_time"] > 0)]
     for col in HHMM_COLS:
         df = df[valid_hhmm(df[col])]
     report["sanity_check_rows_dropped"] = before - len(df)
 
-    ## 4. Dropping redundant time columns (covered by time_hour)
     df = df.drop(columns = DELETE_TIME_COLS)
 
-    ## 5. Setting types
     df["time_hour"] = pd.to_datetime(df["time_hour"])
     for col in CATEGORICAL_COLS:
         df[col] = df[col].astype(str).astype("category")
