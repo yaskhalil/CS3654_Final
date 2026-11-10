@@ -1,3 +1,4 @@
+# python3 -m backend.stats.normality
 """
 Normality checks: Q-Q plot, Kolmogorov-Smirnov, D'Agostino's K^2.
 

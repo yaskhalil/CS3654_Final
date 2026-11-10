@@ -1,3 +1,4 @@
+# python3 -m frontend.app
 from pathlib import Path
 import pandas as pd
 import plotly.express as px

@@ -1,3 +1,4 @@
+# python3 -m backend.pipeline.gold_star
 import os
 import pandas as pd
 from backend.logger import logger

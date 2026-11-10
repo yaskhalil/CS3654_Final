@@ -1,3 +1,4 @@
+# python3 -m backend.pipeline.bronze
 """
 This file will handle the download of Flights dataset from kaggle.
 Then save it to the bronze layer of the data folder.
